@@ -1,6 +1,11 @@
 import React, { useState } from 'react';
 import { Button } from './components/ui/button';
 import { InstallGuide } from './components/InstallGuide';
+import {
+  sampleNormalTokenTransfer,
+  sampleMaliciousDelegation,
+  samplePostExecutionAnomaly,
+} from './samples/sendTransaction';
 
 function shortenAddress(address: string, head = 6, tail = 4): string {
   if (address.length <= head + tail) return address;
@@ -15,11 +20,31 @@ export default function App() {
   const [walletAddress, setWalletAddress] = useState('');
   const [connectError, setConnectError] = useState('');
 
-  const handleTransaction = (setStatus: (status: string) => void) => {
+  const sendTransaction = async (
+    buildTx: (from: string) => import('../types/aegis').EthTransactionParams,
+    setStatus: (s: string) => void
+  ) => {
+    if (!walletAddress) {
+      setStatus('Connect wallet first');
+      return;
+    }
+    if (!window.aegis) {
+      setStatus('AEGIS extension not found');
+      return;
+    }
     setStatus('Sending transaction...');
-    setTimeout(() => {
-      setStatus('✓ Transaction completed');
-    }, 1500);
+    try {
+      const tx = buildTx(walletAddress);
+      console.log('tx', tx);
+      const hash = await window.aegis.request({
+        method: 'eth_sendTransaction',
+        params: [tx],
+      });
+      setStatus(`✓ Sent. Tx: ${typeof hash === 'string' ? shortenAddress(hash, 10, 8) : hash}`);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Transaction failed';
+      setStatus(`✗ ${message}`);
+    }
   };
 
   const connectWallet = async () => {
@@ -101,22 +126,22 @@ export default function App() {
         </div>
 
         <div className="space-y-6 sm:space-y-10">
-          {/* Transaction 1: Normal Token Transfer */}
+          {/* Transaction 1: Normal ETH Transfer */}
           <div>
             <h2 className="text-base sm:text-lg mb-2 text-slate-900">
-              <span className="text-blue-600">##</span> Normal Token Transfer
+              <span className="text-blue-600">##</span> Normal ETH Transfer
             </h2>
             <p className="text-slate-600 text-sm mb-4">
-              Execute ModuleA7702.dispatch() to transfer 1 AGT token. AI precheck analyzes the transaction for security risks.
+              Execute dispatch(Request[]) to send 0.001 ETH to a recipient. AI precheck analyzes the transaction for security risks.
             </p>
             <Button 
-              onClick={() => handleTransaction(setStatus1)}
+              onClick={() => sendTransaction(sampleNormalTokenTransfer, setStatus1)}
               className="bg-blue-600 hover:bg-blue-700 w-full sm:w-auto"
             >
               Execute Transaction
             </Button>
             {status1 && (
-              <p className={`mt-3 text-sm ${status1.includes('✓') ? 'text-green-600' : 'text-slate-600'}`}>
+              <p className={`mt-3 text-sm ${status1.includes('✓') ? 'text-green-600' : status1.startsWith('✗') ? 'text-red-600' : 'text-slate-600'}`}>
                 {status1}
               </p>
             )}
@@ -131,13 +156,13 @@ export default function App() {
               Attempt to change EIP-7702 delegation target to unauthorized address. AI precheck should block this transaction.
             </p>
             <Button 
-              onClick={() => handleTransaction(setStatus2)}
+              onClick={() => sendTransaction(sampleMaliciousDelegation, setStatus2)}
               className="bg-blue-600 hover:bg-blue-700 w-full sm:w-auto"
             >
               Execute Transaction
             </Button>
             {status2 && (
-              <p className={`mt-3 text-sm ${status2.includes('✓') ? 'text-green-600' : 'text-slate-600'}`}>
+              <p className={`mt-3 text-sm ${status2.includes('✓') ? 'text-green-600' : status2.startsWith('✗') ? 'text-red-600' : 'text-slate-600'}`}>
                 {status2}
               </p>
             )}
@@ -152,13 +177,13 @@ export default function App() {
               Execute transaction that passes precheck but shows anomalous behavior post-execution. Wallet should auto-freeze.
             </p>
             <Button 
-              onClick={() => handleTransaction(setStatus3)}
+              onClick={() => sendTransaction(samplePostExecutionAnomaly, setStatus3)}
               className="bg-blue-600 hover:bg-blue-700 w-full sm:w-auto"
             >
               Execute Transaction
             </Button>
             {status3 && (
-              <p className={`mt-3 text-sm ${status3.includes('✓') ? 'text-green-600' : 'text-slate-600'}`}>
+              <p className={`mt-3 text-sm ${status3.includes('✓') ? 'text-green-600' : status3.startsWith('✗') ? 'text-red-600' : 'text-slate-600'}`}>
                 {status3}
               </p>
             )}
