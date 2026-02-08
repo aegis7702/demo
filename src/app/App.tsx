@@ -7,6 +7,7 @@ export default function App() {
   const [status2, setStatus2] = useState('');
   const [status3, setStatus3] = useState('');
   const [showGuide, setShowGuide] = useState(false);
+  const [walletAddress, setWalletAddress] = useState('');
 
   const handleTransaction = (setStatus: (status: string) => void) => {
     setStatus('Sending transaction...');
@@ -15,30 +16,64 @@ export default function App() {
     }, 1500);
   };
 
+  const connectWallet = () => {
+    // Simulate wallet connection
+    setWalletAddress('0x0dfc...C589e');
+  };
+
+  const disconnectWallet = () => {
+    setWalletAddress('');
+  };
+
   if (showGuide) {
     return <InstallGuide onBack={() => setShowGuide(false)} />;
   }
 
   return (
-    <div className="min-h-screen bg-white p-8">
-      <div className="max-w-3xl mx-auto py-12">
-        <div className="flex items-center justify-between mb-8">
-          <h1 className="text-2xl text-slate-900">
+    <div className="min-h-screen bg-white p-4 sm:p-8">
+      <div className="max-w-3xl mx-auto py-6 sm:py-12">
+        <div className="mb-6 sm:mb-8">
+          <h1 className="text-xl sm:text-2xl text-slate-900 mb-4">
             <span className="text-blue-600">#</span> AEGIS Demo
           </h1>
-          <Button 
-            onClick={() => setShowGuide(true)}
-            variant="outline"
-            className="border-blue-600 text-blue-600 hover:bg-blue-50"
-          >
-            Install Extension (Demo)
-          </Button>
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
+            {walletAddress ? (
+              <>
+                <div className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-green-50 border border-green-200 rounded-lg flex-1 sm:flex-none">
+                  <div className="w-2 h-2 rounded-full bg-green-500 flex-shrink-0"></div>
+                  <span className="text-sm text-slate-700 truncate">{walletAddress}</span>
+                </div>
+                <Button 
+                  onClick={disconnectWallet}
+                  variant="outline"
+                  size="sm"
+                  className="w-full sm:w-auto"
+                >
+                  Disconnect
+                </Button>
+              </>
+            ) : (
+              <Button 
+                onClick={connectWallet}
+                className="bg-green-600 hover:bg-green-700 w-full sm:w-auto"
+              >
+                Connect Wallet
+              </Button>
+            )}
+            <Button 
+              onClick={() => setShowGuide(true)}
+              variant="outline"
+              className="border-blue-600 text-blue-600 hover:bg-blue-50 w-full sm:w-auto"
+            >
+              Install Extension (Demo)
+            </Button>
+          </div>
         </div>
 
-        <div className="space-y-10">
+        <div className="space-y-6 sm:space-y-10">
           {/* Transaction 1: Normal Token Transfer */}
           <div>
-            <h2 className="text-lg mb-2 text-slate-900">
+            <h2 className="text-base sm:text-lg mb-2 text-slate-900">
               <span className="text-blue-600">##</span> Normal Token Transfer
             </h2>
             <p className="text-slate-600 text-sm mb-4">
@@ -46,7 +81,7 @@ export default function App() {
             </p>
             <Button 
               onClick={() => handleTransaction(setStatus1)}
-              className="bg-blue-600 hover:bg-blue-700"
+              className="bg-blue-600 hover:bg-blue-700 w-full sm:w-auto"
             >
               Execute Transaction
             </Button>
@@ -59,7 +94,7 @@ export default function App() {
 
           {/* Transaction 2: Malicious Delegation */}
           <div>
-            <h2 className="text-lg mb-2 text-slate-900">
+            <h2 className="text-base sm:text-lg mb-2 text-slate-900">
               <span className="text-blue-600">##</span> Malicious Delegation Attempt
             </h2>
             <p className="text-slate-600 text-sm mb-4">
@@ -67,7 +102,7 @@ export default function App() {
             </p>
             <Button 
               onClick={() => handleTransaction(setStatus2)}
-              className="bg-blue-600 hover:bg-blue-700"
+              className="bg-blue-600 hover:bg-blue-700 w-full sm:w-auto"
             >
               Execute Transaction
             </Button>
@@ -80,7 +115,7 @@ export default function App() {
 
           {/* Transaction 3: Post-execution Anomaly */}
           <div>
-            <h2 className="text-lg mb-2 text-slate-900">
+            <h2 className="text-base sm:text-lg mb-2 text-slate-900">
               <span className="text-blue-600">##</span> Post-execution Anomaly Detection
             </h2>
             <p className="text-slate-600 text-sm mb-4">
@@ -88,7 +123,7 @@ export default function App() {
             </p>
             <Button 
               onClick={() => handleTransaction(setStatus3)}
-              className="bg-blue-600 hover:bg-blue-700"
+              className="bg-blue-600 hover:bg-blue-700 w-full sm:w-auto"
             >
               Execute Transaction
             </Button>
