@@ -7,14 +7,12 @@ interface InstallGuideProps {
 }
 
 export function InstallGuide({ onBack }: InstallGuideProps) {
-  const handleDownload = () => {
-    // Simulate download - in production, this would download extension.zip
-    alert('extension.zip download started');
-  };
+  const downloadUrl = `${import.meta.env.BASE_URL}dist-extension.zip`;
 
-  const openExtensionsPage = () => {
+  const openChromeExtensions = () => {
     window.open('chrome://extensions', '_blank');
   };
+
 
   return (
     <div className="min-h-screen bg-white p-4 sm:p-8">
@@ -41,14 +39,13 @@ export function InstallGuide({ onBack }: InstallGuideProps) {
             <div className="flex-1 min-w-0">
               <h2 className="text-base sm:text-lg mb-2 text-slate-900">Download Extension</h2>
               <p className="text-slate-600 text-sm mb-4">
-                Click the button below to download extension.zip
+                Click the link below to download dist-extension.zip
               </p>
-              <Button 
-                onClick={handleDownload}
-                className="bg-blue-600 hover:bg-blue-700 w-full sm:w-auto"
-              >
-                <Download className="w-4 h-4 mr-2" />
-                Download extension.zip
+              <Button asChild className="bg-blue-600 hover:bg-blue-700 w-full sm:w-auto">
+                <a href={downloadUrl} download="dist-extension.zip">
+                  <Download className="w-4 h-4 mr-2" />
+                  Download dist-extension.zip
+                </a>
               </Button>
             </div>
           </div>
@@ -61,7 +58,7 @@ export function InstallGuide({ onBack }: InstallGuideProps) {
             <div className="flex-1 min-w-0">
               <h2 className="text-base sm:text-lg mb-2 text-slate-900">Extract ZIP File</h2>
               <p className="text-slate-600 text-sm">
-                Unzip the downloaded file to a folder on your computer
+                Unzip dist-extension.zip to a folder on your computer
               </p>
             </div>
           </div>
@@ -76,13 +73,16 @@ export function InstallGuide({ onBack }: InstallGuideProps) {
               <p className="text-slate-600 text-sm mb-4">
                 Open the Chrome extensions management page
               </p>
-              <Button 
-                onClick={openExtensionsPage}
+              <Button
+                onClick={openChromeExtensions}
                 variant="outline"
                 className="w-full sm:w-auto"
               >
                 Open chrome://extensions
               </Button>
+              <p className="text-slate-500 text-xs mt-2">
+                If the link is blocked, type <code className="bg-slate-100 px-1 rounded">chrome://extensions</code> in the address bar.
+              </p>
             </div>
           </div>
 
