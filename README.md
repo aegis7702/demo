@@ -36,11 +36,9 @@ Static output is generated in the `dist/` directory.
 
 ## GitHub Pages
 
-This repo is set up to deploy to **GitHub Pages** on push to `main`.
-
 1. In your repo: **Settings → Pages**
-2. Under **Build and deployment**, set **Source** to **GitHub Actions**
-3. Deploy: push to `main` (auto), or run **`npm run deploy`** (requires [GitHub CLI](https://cli.github.com/) installed and `gh auth login`). The site will be at:
+2. Under **Build and deployment**, set **Source** to **Deploy from a branch**, branch **gh-pages** (create if needed).
+3. Run **`npm run deploy`** — builds and pushes `dist` to the `gh-pages` branch. Site URL:
    - `https://aegis7702.github.io/demo/`
 
 ## Attributions
